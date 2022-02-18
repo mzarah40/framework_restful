@@ -27,7 +27,7 @@ class HomeController
 		$this->data['resultSet'] = $this->homeModel->all(); //(new HomeModel())->all();
 		$this->data['title']     = "Home - MZ Framework 1.0";
 		$this->data['csrf']      = Csrf::get();
-		$this->data['msg'] = $msg;
+		$this->data['msg']       = $msg;
 		
 
 		// $this->traitLoadView('template/header', $this->data);
@@ -35,7 +35,7 @@ class HomeController
 		// $this->traitLoadView('template/footer',[]);
 
 		View::render('template/header', $this->data);
-		View::render('content/index'  , $this->data);
+		View::render('form/form_generate'  , $this->data);
 		View::render('template/footer',[]);
 
 	}

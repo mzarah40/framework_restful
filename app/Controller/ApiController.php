@@ -25,7 +25,7 @@ class ApiController
 		
 		$jwt = new Jwt($credentials);
 
-		return $jwt->getToken();
+		return $jwt->buildToken();
 	
 	}
 }

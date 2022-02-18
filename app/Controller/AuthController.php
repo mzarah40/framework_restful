@@ -9,9 +9,12 @@ use App\Model\AuthModel;
 use App\Helper\View;
 
 
+
 class AuthController 
 {
 	// use \App\Machinery\TraitMachinery;
+
+	use \App\Trait\JwtTraitValidation;
 
 	private $jwt = null;
 	private $user = "";
@@ -73,18 +76,11 @@ class AuthController
 		
 		$input_data = file_get_contents("php://input");
 
-		$authorization = getallheaders();
-		$authorization = $authorization['Authorization'];
+		// usado para validar token
+		self::JwtValidate();
 
-		$verify = JwtVerify::verify($authorization);
-
-		if (!$verify) {
-			echo JwtResponseHttp::response(401);
-			return false;
-		}
-
-		//echo JwtResponseHttp::response(200);
-		echo json_encode(['token' => $authorization]);
+		// echo JwtResponseHttp::response(200);
+		echo json_encode(['status' => 200]);
 
 	}
 }

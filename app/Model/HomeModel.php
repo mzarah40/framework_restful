@@ -7,6 +7,7 @@ use App\Orm\FlashQuery;
 class HomeModel
 {
 	use \App\Machinery\TraitMachinery;
+	
 	private $flashQuery = null;
 	private $table = "users";
 
@@ -29,7 +30,7 @@ class HomeModel
 		
 			return $this->flashQuery->select(['*'])
 									->from([$this->table])
-									->where('id = '.$id)
+									->where("id = '" . $id . "'")
 									->get();
 		} else {
 
@@ -41,5 +42,14 @@ class HomeModel
 	public function insert(array $values)
 	{
 		return $this->flashQuery->insert($this->table, $values);
+	}
+
+	public function update (array $values, int $id) 
+	{
+		if ( TraitMachinery::isNatural($id)) {
+			return $this->flashQuery->update($this->table, $values, $id);
+		} else {
+			return false;
+		}
 	}
 }

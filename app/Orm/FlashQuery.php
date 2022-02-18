@@ -159,7 +159,12 @@ class FlashQuery
 		$this->sql .= ")";
 
 	
-		return $this->run->execute($this->sql);
+		$this->run->execute($this->sql);
+
+		$sql = "SELECT MAX(id) FROM " . $table;
+		$res = $this->run->execute($sql);
+
+		return $res->id;
 
 	}
 
@@ -174,17 +179,19 @@ class FlashQuery
 	}
 
 
-	public function update (string $table, $fields) 
+	public function update (string $table, $fields, $id) 
 	{
 		$this->sql = " UPDATE " . $this->run->realScape($table) . " SET ";
 
 		foreach ( $fields as $idx => $value ) {
 
-			$this->sql .= " $idx = '" . $this->run->realScape($value) . "',";
+			$this->sql .=  $this->run->realScape($idx) . "='" . $this->run->realScape($value) . "',";
 
 		}
 
 		$this->sql = substr($this->sql, 0, -1);
+
+		$this->sql .= " WHERE id ='" . $id . "';";
 
 		// executa e retorna um resultado
 

@@ -2,6 +2,8 @@
 
 namespace App\Machinery;
 
+use App\Machinery\MakeClass;
+
 class BaseCrud
 {
 
@@ -15,20 +17,20 @@ class BaseCrud
 		$this->table = $table;
 	}
 
-	public function up (array $fields ) 
+	public function make_sql ( array $fields ) : string 
 	{
 
 		$this->fields = $fields;
 
 		$sql  = "CREATE TABLE IF NOT EXISTS " . $this->table . " ( id INT NOT NULL AUTO_INCREMENT, ";
 		
-		$count = 0;
+		$counter = 0;
 
 		foreach ($this->fields['name'] as $index => $value) {
 
-			$sql .= " " . $value . " " . $this->fields['type'][$count] . "(" . $this->fields['size'][$count] . ") " . $this->fields['nullable'][$count] . ",";
+			$sql .= " " . $value . " " . $this->fields['dbFieldType'][$counter] . "(" . $this->fields['size'][$counter] . ") " . $this->fields['nullable'][$counter] . ",";
 
-			$count++;
+			$counter++;
 
 		}
 
@@ -36,19 +38,15 @@ class BaseCrud
 
 		$sql .= ", PRIMARY KEY(id) );";
 	
+		return $sql;
 	}
 
 	public function down () 
 	{
-		$sql  = " TRUNCATE " . $this->table "; ";
+		$sql  = " TRUNCATE " . $this->table .";";
 		$sql .= " DROP TABLE " . $this->table . "; ";
 	}
 
-
-	public function make_view (int $idForm) 
-	{
-
-	}
 
 	public function make_controller () 
 	{
@@ -59,12 +57,12 @@ class BaseCrud
 			namespace App\Controller;
 
 			use App\Security\Csrf;
-			use App\Model\\' . ucfirst($this->name) . 'Model;
+			use App\Model\\' . ucfirst($this->table) . 'Model;
 			use App\Helper\View;
 			use App\Helper\SessionInitHelper;
 			use Sys\Request\Request;
 
-			class ' . ucfirst($this->name) . 'Controller  
+			class ' . ucfirst($this->table) . 'Controller  
 			{
 				private $model;
 
@@ -118,32 +116,98 @@ class BaseCrud
 					$this->index("Inserido com Sucesso");
 				}
 
-				public function update (int $id)
+				public function update (array $values, int $id)
 				{
-
+					return $this->model->update($values, $id);
 				}';
 
 				foreach ( $this->fields['name'] as $idx => $val ) {
-					'
+					$this->controller .= '
 					public function get'.ucfirst($val).' () 
 					{
 
-						return $this->'$val';
+						return $this->' . $val . ';
 					}
 
 					public function set'.ucfirst($val).' ($valor) 
 					{
-						$this->'$val' = $valor;
+						$this->' . $val . ' = $valor;
 					}
 
-				'
+					';
 				}
-				'
+				
 
+		$this->controller .= '
+			}
+		';
+
+	}
+
+	public function make_model ()
+	{
+		$this->model = '
+			<?php 
+
+			namespace App\Model;
+
+			use App\Orm\FlashQuery;
+
+			class ' . ucfirst($this->table) . 'Model
+			{
+				use \App\Machinery\TraitMachinery;
+
+				private $flashQuery = null;
+				private $table      = "' . $this->table . '";
+
+				public function __construct () 
+				{
+					$this->flashQuery = new FlashQuery();
+				}
+
+				public function all () 
+				{
+					return $this->flashQuery->select([\'*\'])
+											->from([$this->table])
+											->get();
+				}
+
+				public function findById (int $id) 
+				{
+					if ( TraitMachinery::isNatural($id) ) {
+						return $this->flashQuery->select(["*"])
+												->from([$this->table])
+												->where("id = \'" . $id . "\'")
+												->get() 
+					} else {
+						return false;
+					}
+				}
+
+				public function insert (array $values) 
+				{
+					return $this->flashQuery->insert($this->table, $values);
+				}
+
+				public function update (array $values, int $id)
+				{
+					if ( TraitMachinery::isNatural($id) ) {
+						return $this->flashQuery->update($this->table, $values, $id);
+					} else {
+						return false;
+					}
+				}
 			}';
+	}
 
+	public function makeRender (bool $attachment=false)  
+	{
+		$baseName   = ucfirst($this->table);
+		$makeClass  = new MakeClass;
+		MakeClass::make($baseName, $this->controller, "controller");
+		MakeClass::make($baseName, $this->model, "model");
 
-
+		$makeClass->compact($attachment);
 	}
 
 }

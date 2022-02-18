@@ -2,7 +2,7 @@
 
 namespace App\Classes;
 
-class FormMountReturnAttributes
+class CreateCrudMount
 {
 	private $requested;
 	private $formAttributes = [];
@@ -75,6 +75,9 @@ class FormMountReturnAttributes
 			foreach ( $this->requested['tipo'] as $index => $value ) 
 			{
 
+				// name do campo
+				list($name, $label, $id, $dbFieldType, $size) = explode(",", $this->requested['nome'][$contador]);
+
 				// preenchendo os campos
 
 				$this->formFields['tipo'][$contador]        = $this->requested['tipo'][$contador];
@@ -89,13 +92,20 @@ class FormMountReturnAttributes
 				$this->formFields['class'][$contador]       = $this->requested['class'][$contador];
 				$this->formFields['maxlength'][$contador]   = $this->requested['maxlength'][$contador];
 				$this->formFields['obrigatorio'][$contador] = $this->requested['obrigatorio'][$contador];
-				
+				$this->formFields['dbFieldType'][$contador] = $dbFieldType;
+				$this->formFields['size'][$contador]        = $size;
+ 				
+				if ( $this->formFields['obrigatorio'][$contador] == 'required' ) {
+					$this->formFields['nullable'][$contador] =  "NOT NULL";
+				} else {
+					$this->formFields['nullable'][$contador] = " NULL";
+				}
+
 				if ( $this->requested['colunas'][$contador] ) {
 					$this->form .= '<div class="col-md-' . $this->requested['colunas'][$contador] . ' col-sm-12">';
 				}
 
-				// name do campo
-				list($name, $label, $id) = explode(",", $this->requested['nome'][$contador]);
+
 
 				// vetor dos DOM que vai input
 
@@ -142,7 +152,16 @@ class FormMountReturnAttributes
 			$this->form .= '</form>';
 		
 		}
+	}
 
+	public function sql_build () 
+	{
+
+	}
+
+
+	public function html_build () : string 
+	{
 		
 	}
 
