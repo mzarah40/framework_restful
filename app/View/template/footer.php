@@ -27,7 +27,7 @@
 			frm += '		<option name="password">Password</option>';
 			frm += '	</select>';
 			frm += '</div>';
-			frm += '<div class="col-md-1 col-sm-12" title="Caracteristicas do campo separadas por vírgula. Dados: Name, Label, Id, Tipo de dado, Comprimento. ( Exemplo: nome, Nome, nome, VARCHAR, 255 )">';
+			frm += '<div class="col-md-1 col-sm-12" title="Caracteristicas do campo separadas por (ponto e virgula). Dados: Name; Label; Id; Tipo de dado; Comprimento. ( Exemplo: nome; Nome; nome; VARCHAR; 255 ), (Exemplo: preco;Preço;preco;DECIMAL;10,4)">';
 			frm += '	Caracteristicas:<br>';
 			frm += '	<input type="text" name="nome[]" placeholder="Nome do Campo" class="form-control">';
 			frm += '</div>';
@@ -74,7 +74,6 @@
 			frm += '<div class="col-md-1 col-sm-12">';
 			frm += '	Evento: <br>';
 			frm += '	<select name="evento[]" class="form-control">';
-			frm += '		<option value="">Evento</option>';
 			frm += '		<option value="onblur=">onBlur</option>';
 			frm += '		<option value="onkeyup=">onKeyUp</option>';
 			frm += '		<option value="onkeypress=">onKeyPress</option>';

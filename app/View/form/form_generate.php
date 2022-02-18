@@ -84,7 +84,7 @@
 							<option name="password">Password</option>
 						</select>
 					</div>
-					<div class="col-md-1 col-sm-12" title="Caracteristicas do campo separadas por vírgula. Dados: Name, Label, Id, Tipo de dado, Comprimento. ( Exemplo: nome, Nome, nome, VARCHAR, 255 )">
+					<div class="col-md-1 col-sm-12" title="Caracteristicas do campo separadas por (ponto e virgula). Dados: Name; Label; Id; Tipo de dado; Comprimento. ( Exemplo: nome; Nome; nome; VARCHAR; 255 ), (Exemplo: preco;Preço;preco;DECIMAL;10,4)">
 						Caracteristicas:
 						<input type="text" name="nome[]" placeholder="Nome do Campo" class="form-control">
 					</div>
@@ -131,7 +131,6 @@
 					<div class="col-md-1 col-sm-12">
 						Evento: <br>
 						<select name="evento[]" class="form-control">
-							<option value="">Evento</option>
 							<option value="onblur=">onBlur</option>
 							<option value="onkeyup=">onKeyUp</option>
 							<option value="onkeypress=">onKeyPress</option>

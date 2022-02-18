@@ -76,10 +76,10 @@ class CreateCrudMount
 			{
 
 				// name do campo
-				list($name, $label, $id, $dbFieldType, $size) = explode(",", $this->requested['nome'][$contador]);
+				list($name, $label, $id, $dbFieldType, $size) = explode(";", $this->requested['nome'][$contador]);
 
 				// preenchendo os campos
-
+				$this->formFields['name'][$contador]        = $name;
 				$this->formFields['tipo'][$contador]        = $this->requested['tipo'][$contador];
 				$this->formFields['nome'][$contador]        = $this->requested['nome'][$contador];
 				$this->formFields['label'][$contador]       = $this->requested['label'][$contador];
@@ -156,11 +156,29 @@ class CreateCrudMount
 
 	public function sql_build () 
 	{
+		$this->fields = $fields;
 
+		$sql  = "CREATE TABLE IF NOT EXISTS " . strtolower($this->formAttributes['name']) . " ( id INT NOT NULL AUTO_INCREMENT, ";
+		
+		$counter = 0;
+
+		foreach ($this->formFields['name'] as $index => $value) {
+
+			$sql .= " " . $value . " " . $this->formFields['dbFieldType'][$counter] . "(" . $this->formFields['size'][$counter] . ") " . $this->formFields['nullable'][$counter] . ",";
+
+			$counter++;
+
+		}
+
+		$sql = substr($sql, 0, -1);
+
+		$sql .= ", PRIMARY KEY(id) );";
+	
+		return $sql;
 	}
 
 
-	public function html_build () : string 
+	public function grid_build () : string 
 	{
 		
 	}
